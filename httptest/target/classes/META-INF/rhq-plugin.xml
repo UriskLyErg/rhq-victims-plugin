@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<plugin name="Victims"
+        displayName="Victims plugin"
+        package="org.rhq.plugins.victims"
+        version="2.0"
+        description="Monitoring of vulnerable Jars"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="urn:xmlns:rhq-plugin"
+        xmlns:c="urn:xmlns:rhq-configuration">
+        
+   <server name="VictimsPlugin"
+           discovery="VictimsDiscoveryComponent"
+           class="VictimsComponent"
+           description="Victims Check" 
+           >
+    <metric property="vulnerability"
+            displayName="Vulnerablities"
+            measurementType="dynamic"
+            displayType="summary"/>
+    
+    <plugin-configuration>
+      <!-- <c:list-property name="path" 
+                       required="true">  -->
+      <c:simple-property name = "path"
+                         type = "string"
+                         required = "true" />
+      <!--  </c:list-property> -->
+    </plugin-configuration>
+      
+   </server>
+        
+</plugin>        
