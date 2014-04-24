@@ -18,66 +18,53 @@
  */
 package org.rhq.plugins.victims;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.Collections;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.rhq.core.domain.configuration.Configuration;
-import org.rhq.core.domain.resource.ResourceType;
 import org.rhq.core.pluginapi.inventory.DiscoveredResourceDetails;
 import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
 import org.rhq.core.pluginapi.inventory.ManualAddFacet;
-import org.rhq.core.pluginapi.inventory.ProcessScanResult;
-import org.rhq.core.pluginapi.inventory.ResourceComponent;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryComponent;
 import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
-import org.rhq.core.system.ProcessInfo;
 
 /**
- * @author Caleb House
- * 
- */
-public class VictimsDiscoveryComponent implements
-		ResourceDiscoveryComponent<ResourceComponent<?>>,
-		ManualAddFacet<ResourceComponent<?>> {
-
-	
-	/*
-	@Override
-	public DiscoveredResourceDetails discoverResource(Configuration arg0,
-			ResourceDiscoveryContext<ResourceComponent<?>> arg1)
-			throws InvalidPluginConfigurationException {
-	}
-
-	@Override
-	public Set<DiscoveredResourceDetails> discoverResources(
-			ResourceDiscoveryContext<ResourceComponent<?>> context)
-			throws InvalidPluginConfigurationException, Exception {
-		// TODO Auto-generated method stub
-		Set<DiscoveredResourceDetails> result = new HashSet<DiscoveredResourceDetails>();
-		DiscoveredResourceDetails drd = this.discoverResource(context.getDefaultPluginConfiguration(), context);
-		Configuration childConfig = drd.getPluginConfiguration();
-		String key = childConfig.getSimpleValue("path", null);
-			if (key == null)
-				throw new InvalidPluginConfigurationException(
-						"No path provided");
-
-			String name = "Victims Check";
-			String description = "Vulnerable Jar/War/Sar";
-			ResourceType resourceType = context.getResourceType();
-			DiscoveredResourceDetails detail = new DiscoveredResourceDetails(
-					resourceType, key, name, null, description, childConfig,
-					null);
-
-			result.add(detail);
-		}
-
-		return result;
-	}
+* 
+* @author Caleb House
 */
+public class VictimsDiscoveryComponent implements ManualAddFacet<VictimsComponent>, ResourceDiscoveryComponent<VictimsComponent> {
+
+
+    @Override
+    public DiscoveredResourceDetails discoverResource(Configuration pluginConfiguration,
+                                                      ResourceDiscoveryContext<VictimsComponent> context) throws InvalidPluginConfigurationException {
+
+        String path = pluginConfiguration.getSimpleValue("path");
+        if (path==null || path.isEmpty()) {
+            throw new InvalidPluginConfigurationException("Path must not be empty");
+        }
+        if (path.equals("/")) {
+            throw new InvalidPluginConfigurationException("/ is forbidden");
+        }
+
+        DiscoveredResourceDetails result = new DiscoveredResourceDetails(
+            context.getResourceType(),
+            path,
+            path,
+            null,
+            "A directory",
+            pluginConfiguration,
+            null);
+        return result;
+    }
+
+    @Override
+    public Set<DiscoveredResourceDetails> discoverResources(
+        ResourceDiscoveryContext<VictimsComponent> context) throws InvalidPluginConfigurationException, Exception {
+        return Collections.emptySet();
+    }
+}
+/*
 	private static final Log LOG = LogFactory.getLog(VictimsDiscoveryComponent.class);
 	private static final String VICTIMS_SCAN_PATH = "paths";
 	private static final String VICTIMS_VERSION = "version";
@@ -119,3 +106,4 @@ public class VictimsDiscoveryComponent implements
 
         }
 }
+*/

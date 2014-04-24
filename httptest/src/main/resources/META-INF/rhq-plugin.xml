@@ -7,8 +7,6 @@
 
 	<server name="VictimsPlugin" discovery="VictimsDiscoveryComponent"
 		class="VictimsComponent" description="Victims Check">
-		<!-- <metric property="vulnerability" displayName="Vulnerablities"
-			measurementType="dynamic" displayType="summary" /> -->
 
 		<plugin-configuration>
 			<c:list-property name="Paths to Test">

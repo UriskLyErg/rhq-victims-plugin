@@ -41,40 +41,44 @@ import com.redhat.victims.VictimsScanner;
 import com.redhat.victims.database.VictimsDB;
 import com.redhat.victims.database.VictimsDBInterface;
 
-/**
- * @author Caleb House
- * 
- */
-public class VictimsComponent implements
-		ResourceComponent, MeasurementFacet {
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hyperic.sigar.DirUsage;
+import org.rhq.core.domain.measurement.MeasurementDataNumeric;
+import org.rhq.core.pluginapi.util.ObjectUtil;
+import org.rhq.core.system.FileSystemInfo;
+import org.rhq.core.system.SystemInfo;
 
-	private static final String[] EXTENSIONS = new String[] { "jar", "war",
-			"sar" };
+/**
+ * @author Greg Hinkle
+ * @author Heiko W. Rupp
+ */
+public class VictimsComponent implements ResourceComponent<PlatformComponent>, MeasurementFacet {
+
+	private static final Log LOG = LogFactory.getLog(VictimsComponent.class);
+	private static final String[] EXTENSIONS = new String[] { "jar", "war", "sar" };
 	private ArrayList<String> paths = new ArrayList<String>();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.rhq.core.pluginapi.inventory.ResourceComponent#start(org.rhq.core
-	 * .pluginapi.inventory.ResourceContext)
-	 */
-	public void start(ResourceContext context)
+	private ResourceContext<?> resourceContext;
+
+	public void start(ResourceContext<?> resourceContext)
 			throws InvalidPluginConfigurationException, Exception {
-		// paths = context.g;
+		this.resourceContext = resourceContext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.rhq.core.pluginapi.inventory.ResourceComponent#stop()
-	 */
 	public void stop() {
-		// TODO Auto-generated method stub
+	}
+
+	public AvailabilityType getAvailability() {
+		if (paths != null) {
+			return AvailabilityType.UP;
+		} else {
+			return AvailabilityType.DOWN;
+		}
 	}
 
 	public void getValues(MeasurementReport report,
-			Set<MeasurementScheduleRequest> metrics) throws IOException,
+			Set<MeasurementScheduleRequest> requests) throws IOException,
 			Exception, VictimsException {
 
 		Collection<File> fileList = null;
@@ -93,19 +97,14 @@ public class VictimsComponent implements
 			for (VictimsRecord vr : VictimsScanner.getRecords(javaFile
 					.getAbsolutePath())) {
 				for (String cve : vdb.getVulnerabilities(vr)) {
-					for (MeasurementScheduleRequest request : metrics) {
+					for (MeasurementScheduleRequest request : requests) {
 						if (request.getName().equals("vulnerability")) {
-							report.addData(new MeasurementDataTrait(request,
-									cve));
+							MeasurementDataTrait result = new MeasurementDataTrait(request, cve);
+							report.addData(result);
 						}
 					}
 				}
 			}
 		}
-	}
-
-	@Override
-	public AvailabilityType getAvailability() {
-		return null;
 	}
 }
