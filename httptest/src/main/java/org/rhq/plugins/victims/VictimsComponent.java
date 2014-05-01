@@ -19,13 +19,19 @@
 
 package org.rhq.plugins.victims;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.measurement.AvailabilityType;
 import org.rhq.core.domain.measurement.MeasurementDataTrait;
 import org.rhq.core.domain.measurement.MeasurementReport;
@@ -43,32 +49,33 @@ import com.redhat.victims.database.VictimsDBInterface;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hyperic.sigar.DirUsage;
-import org.rhq.core.domain.measurement.MeasurementDataNumeric;
-import org.rhq.core.pluginapi.util.ObjectUtil;
-import org.rhq.core.system.FileSystemInfo;
-import org.rhq.core.system.SystemInfo;
 
 /**
- * @author Greg Hinkle
- * @author Heiko W. Rupp
+ * @author Caleb House
  */
-public class VictimsComponent implements ResourceComponent<PlatformComponent>, MeasurementFacet {
+public class VictimsComponent implements
+		ResourceComponent<ResourceComponent<?>>, MeasurementFacet {
 
 	private static final Log LOG = LogFactory.getLog(VictimsComponent.class);
 	private static final String[] EXTENSIONS = new String[] { "jar", "war", "sar" };
 	private ArrayList<String> paths = new ArrayList<String>();
+	
+	private ResourceContext<ResourceComponent<?>> resourceContext;
+	private Configuration pluginConfiguration;
 
-	private ResourceContext<?> resourceContext;
-
-	public void start(ResourceContext<?> resourceContext)
+	public void start(ResourceContext<ResourceComponent<?>> resourceContext)
 			throws InvalidPluginConfigurationException, Exception {
 		this.resourceContext = resourceContext;
+		this.pluginConfiguration = this.resourceContext.getPluginConfiguration();
+		for (int i = 0; i < pluginConfiguration.getList("paths").getList().size(); i++){
+			paths.add(pluginConfiguration.getList("paths").getList().get(i).getName());
+		}
 	}
 
 	public void stop() {
 	}
 
+	// Inherited from MeasurementFacet
 	public AvailabilityType getAvailability() {
 		if (paths != null) {
 			return AvailabilityType.UP;
@@ -80,11 +87,11 @@ public class VictimsComponent implements ResourceComponent<PlatformComponent>, M
 	public void getValues(MeasurementReport report,
 			Set<MeasurementScheduleRequest> requests) throws IOException,
 			Exception, VictimsException {
-
+		
 		Collection<File> fileList = null;
 		VictimsDBInterface vdb = VictimsDB.db();
-
-		for (String arg : paths) {// .split(";")){
+		
+		for (String arg : paths) {
 			File dir = new File(arg);
 			if (fileList == null) {
 				fileList = FileUtils.listFiles(dir, EXTENSIONS, true);
@@ -106,5 +113,34 @@ public class VictimsComponent implements ResourceComponent<PlatformComponent>, M
 				}
 			}
 		}
+		
+		/*boolean sendVictimsRecord(String host; int portNumber; String victimsRecord) throws IOException {
+
+	        String hostName = args[0];
+	        int portNumber = Integer.parseInt(args[1]);
+
+	        try (
+	            Socket echoSocket = new Socket(hostName, portNumber);
+	            PrintWriter out =
+	                new PrintWriter(echoSocket.getOutputStream(), true);
+	            BufferedReader in =
+	                new BufferedReader(
+	                    new InputStreamReader(echoSocket.getInputStream()));
+	            BufferedReader stdIn =
+	                new BufferedReader(
+	                    new InputStreamReader(System.in))
+	        ) {
+	            String userInput;
+	            while ((userInput = stdIn.readLine()) != null) {
+	                out.println(userInput);
+	                System.out.println("echo: " + in.readLine());
+	            }
+	        } catch (UnknownHostException e) {
+	            System.err.println("Don't know about host " + hostName);
+	        } catch (IOException e) {
+	            System.err.println("Couldn't get I/O for the connection to " +
+	                hostName);
+	        } 
+	        */
 	}
 }

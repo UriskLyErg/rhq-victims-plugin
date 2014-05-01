@@ -5,16 +5,20 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:xmlns:rhq-plugin"
 	xmlns:c="urn:xmlns:rhq-configuration">
 
-	<server name="VictimsPlugin" discovery="VictimsDiscoveryComponent"
-		class="VictimsComponent" description="Victims Check">
+	<server name="VictimsPlugin" class="VictimsComponent" discovery="VictimsDiscoveryComponent"
+		description="Victims Check" supportsManualAdd="true">
 
 		<plugin-configuration>
-			<c:list-property name="Paths to Test">
-				<c:simple-property name="path" displayName="Path"
-					type="string" required="true" />
+			<c:list-property name="paths">
+				<c:simple-property name="path" type="string"
+					description="Directory to monitor. / is not allowed." required="true"
+					readOnly="true" />
 			</c:list-property>
 		</plugin-configuration>
 
+		<metric property="vulnerability" description="Vulnerabilities in directory"
+			displayName="Vulnerabilies" measurementType="dynamic" />
+
 	</server>
 
-</plugin>        
+</plugin>
