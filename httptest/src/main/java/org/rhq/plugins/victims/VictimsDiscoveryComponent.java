@@ -34,22 +34,10 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 */
 public class VictimsDiscoveryComponent implements ManualAddFacet<VictimsComponent>, ResourceDiscoveryComponent<VictimsComponent> {
 
-
+	//Setup for the plugin. Since nothing happens just create a one time Discovered Resource.
     @Override
     public DiscoveredResourceDetails discoverResource(Configuration pluginConfiguration,
                                                       ResourceDiscoveryContext<VictimsComponent> context) throws InvalidPluginConfigurationException {
-
-        String paths = ""; 
-        
-        for (int i = 0; i < pluginConfiguration.getList("paths").getList().size(); i++){
-        	paths = pluginConfiguration.getList("paths").getList().get(i).getName();
-	        if (paths==null || paths.isEmpty()) {
-	            throw new InvalidPluginConfigurationException("Path must not be empty");
-	        }
-	        if (paths.equals("/")) {
-	            throw new InvalidPluginConfigurationException("/ is forbidden");
-	        }
-        }
 
         DiscoveredResourceDetails result = new DiscoveredResourceDetails(
             context.getResourceType(),
@@ -62,6 +50,7 @@ public class VictimsDiscoveryComponent implements ManualAddFacet<VictimsComponen
         return result;
     }
 
+    //Not used but brought in from interfaces
     @Override
     public Set<DiscoveredResourceDetails> discoverResources(
         ResourceDiscoveryContext<VictimsComponent> context) throws InvalidPluginConfigurationException, Exception {

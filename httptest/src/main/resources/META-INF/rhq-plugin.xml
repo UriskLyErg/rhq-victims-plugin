@@ -11,14 +11,10 @@
 		<plugin-configuration>
 			<c:list-property name="paths">
 				<c:simple-property name="path" type="string"
-					description="Directory to monitor. / is not allowed." required="true"
+					description="Directory to monitor." required="true"
 					readOnly="true" />
 			</c:list-property>
 		</plugin-configuration>
-
-		<metric property="vulnerability" description="Vulnerabilities in directory"
-			displayName="Vulnerabilies" measurementType="dynamic" />
-
 	</server>
 
 </plugin>
