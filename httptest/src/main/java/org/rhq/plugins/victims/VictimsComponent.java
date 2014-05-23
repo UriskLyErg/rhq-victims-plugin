@@ -55,8 +55,7 @@ import com.redhat.victims.VictimsScanner;
 // its there
 // This plugin will report hashes to the server plugin.
 public class VictimsComponent implements
-		ResourceComponent<ResourceComponent<?>>, OperationFacet,
-		MeasurementFacet {
+		ResourceComponent<ResourceComponent<?>>, OperationFacet {
 
 	private static final Log LOG = LogFactory.getLog(VictimsComponent.class);
 	private static String PATH_CONFIGURATION = "paths";
@@ -98,31 +97,6 @@ public class VictimsComponent implements
 
 	}
 
-	// Inherited from MeasurementFacet
-	// Basically says whether or not the plugins avaliable, if theres no paths
-	// we aint doin jack.
-	public AvailabilityType getAvailability() {
-		if (paths != null) {
-			return AvailabilityType.UP;
-		} else {
-			return AvailabilityType.DOWN;
-		}
-	}
-
-	/*
-	 * Gets values for doing stuff. Im not quite sure I want to use this since
-	 * it isnt actually reporting to the measurement facet anymore, its being
-	 * reported to the server. Got to find out if the server has anything to
-	 * show metrics otherwise this could be a waste of time.
-	 */
-	public void getValues(MeasurementReport report,
-			Set<MeasurementScheduleRequest> requests) throws IOException,
-			Exception, VictimsException {
-	}
-
-	// Old used for testing before server side implemented
-	// VictimsDBInterface vdb = VictimsDB.db();
-
 	public OperationResult invokeOperation(String name, Configuration parameters)
 			throws InterruptedException, Exception {
 
@@ -130,13 +104,14 @@ public class VictimsComponent implements
 			for (String path : paths) {
 				if (new File(path).exists()) {
 					for (VictimsRecord vr : VictimsScanner.getRecords(path)) {
-						//LOG.info(vr.hash);
 						try (Socket echoSocket = new Socket(hostName, PORT_NUMBER);
 								PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 								BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 								BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))) {
 							String toSend = pcName + SALT + vr.toString();
 							out.println(toSend);
+							out.println();
+							echoSocket.close();
 						} catch (UnknownHostException e) {
 							System.err.println("Don't know about host " + hostName);
 						} catch (IOException e) {
@@ -150,6 +125,11 @@ public class VictimsComponent implements
 			return result;
 		}
 		throw new UnsupportedOperationException("Operation " + name + " is not valid");
+	}
+
+	@Override
+	public AvailabilityType getAvailability() {
+		return AvailabilityType.UP;
 	}
 }
 

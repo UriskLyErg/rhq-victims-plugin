@@ -46,8 +46,7 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
-		</dependency>
+			</dependency>
 	</dependencies>
 
 	<profiles>
@@ -111,5 +110,4 @@
 
 	</profiles>
 
-	<groupId>org.rhq</groupId>
-</project>
+	</project>

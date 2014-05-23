@@ -14,6 +14,12 @@
 					description="Directory to monitor." required="true"
 					readOnly="true" />
 			</c:list-property>
+			<c:simple-property name="port" type="string"
+					description="Port number of server." required="true"
+					readOnly="true" />
+			<c:simple-property name="hostname" type="string"
+					description="Host name of server." required="true"
+					readOnly="true" />
 		</plugin-configuration>
 	</server>
 
