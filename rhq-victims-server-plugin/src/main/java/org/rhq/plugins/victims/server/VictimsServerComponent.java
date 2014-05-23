@@ -27,18 +27,25 @@ public class VictimsServerComponent implements ServerPluginComponent, ControlFac
     private static String RECORD = "record";
     private static String PC = "pc";
     private static String CVE = "cve";
+    private static String PATH = "path";
 
-    public void checkCVE(ControlResults controlResults) {
+    public ControlResults checkCVE(ControlResults controlResults) {
     	tempInfected = new PropertyList(INFECTED);
     	for (VictimsRecord record: tempDB.getRecords()) {
-    		for (String cve : record.cves){
-    			tempRecord = new PropertyList(RECORD);
-    			for (String name : tempDB.pcNames(record)) {
-    				tempRecord.add(new PropertySimple(name, name));
+    		for (String name : tempDB.pcNames(record)) {
+    			for (String path : tempDB.getPaths(record)) {
+    				tempRecord = new PropertyList(RECORD);
+        			for (String cve : record.cves){
+        				tempRecord.add(new PropertySimple(PC, name));
+        				tempRecord.add(new PropertySimple(PATH, path));
+        				tempRecord.add(new PropertySimple(CVE, cve));
+        			}    				
     			}
+
     		}
     	}
     	controlResults.getComplexResults().put(tempInfected);
+    	return controlResults;
     }
     /*
      * <serverplugin:results>
@@ -56,6 +63,7 @@ public class VictimsServerComponent implements ServerPluginComponent, ControlFac
 
     public void start() {
         serverSide = new ServerListener(Integer.parseInt((context.getPluginConfiguration().getSimpleValue("portnumber"))));
+        serverSide.run();
     }
 
     public void stop() {
@@ -69,7 +77,7 @@ public class VictimsServerComponent implements ServerPluginComponent, ControlFac
     public ControlResults invoke(String name, Configuration parameters) {
         ControlResults controlResults = new ControlResults();
         if (name.equals("checkCVE")) {
-        	
+        	controlResults = checkCVE(controlResults);
         } else {
             controlResults.setError("Unknown operation name: " + name);
         }

