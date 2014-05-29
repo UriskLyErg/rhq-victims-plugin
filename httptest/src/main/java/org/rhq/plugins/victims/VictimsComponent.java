@@ -60,9 +60,10 @@ public class VictimsComponent implements
 	private static final Log LOG = LogFactory.getLog(VictimsComponent.class);
 	private static String PATH_CONFIGURATION = "paths";
 	private static String SCAN_LOCAL_OPERATION = "scanLocal";
-	private static String URL_CONFIGURATION = "victimsServer";
+	private static String URL_CONFIGURATION = "hostname";
 	private static String SALT = "TESTSALT";
-	private int PORT_NUMBER = 632154;
+	private static String PORT = "port";
+	private int portNumber = 632154;
 		
 	// Consider a Forced port private static String PORT_NUMBER = "port";
 	// No longer required as Victims is smart enough to do directories
@@ -86,8 +87,9 @@ public class VictimsComponent implements
 		for (int i = 0; i < pluginConfiguration.getList(PATH_CONFIGURATION).getList().size(); i++) {
 			paths.add(pluginConfiguration.getList(PATH_CONFIGURATION).getList().get(i).getName());
 		}
-		hostName = this.pluginConfiguration.getSimple(URL_CONFIGURATION).getName();
+		hostName = this.pluginConfiguration.getSimple(URL_CONFIGURATION).getStringValue();
 		pcName = this.resourceContext.getSystemInformation().getHostname();
+		portNumber = this.pluginConfiguration.getSimple(PORT).getIntegerValue();
 	}
 
 	// Useless, we never want to stop, keep on keeping on
@@ -99,31 +101,27 @@ public class VictimsComponent implements
 
 	public OperationResult invokeOperation(String name, Configuration parameters)
 			throws InterruptedException, Exception {
+		
+		Socket echoSocket = new Socket(hostName, portNumber);
+		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
+		String toSend = "";
 
 		if (name != null && name.equals(SCAN_LOCAL_OPERATION)) {
 			for (String path : paths) {
 				if (new File(path).exists()) {
 					for (VictimsRecord vr : VictimsScanner.getRecords(path)) {
-						try (Socket echoSocket = new Socket(hostName, PORT_NUMBER);
-								PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
-								BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-								BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in))) {
-							String toSend = pcName + SALT + vr.toString() + SALT + path;
-							out.println(toSend);
-							out.println();
-							echoSocket.close();
-						} catch (UnknownHostException e) {
-							System.err.println("Don't know about host " + hostName);
-						} catch (IOException e) {
-							System.err.println("Couldn't get I/O for the connection to " + hostName);
-						}
+						toSend = pcName + SALT + vr.toString() + SALT + path;
+						out.println(toSend);
+						out.println();
 					}
 				}
 			}
 			
 			OperationResult result = new OperationResult("Victims Scan Complete");
+			echoSocket.close();
 			return result;
 		}
+		echoSocket.close();
 		throw new UnsupportedOperationException("Operation " + name + " is not valid");
 	}
 
@@ -132,11 +130,3 @@ public class VictimsComponent implements
 		return AvailabilityType.UP;
 	}
 }
-
-/*
- * This is old code that was used to check for vulns before they were sent to a
- * server plugin for (String cve : vdb.getVulnerabilities(vr)) { for
- * (MeasurementScheduleRequest request : requests) { if
- * (request.getName().equals("vulnerability")) { MeasurementDataTrait result =
- * new MeasurementDataTrait(request, cve); report.addData(result); } } }
- */

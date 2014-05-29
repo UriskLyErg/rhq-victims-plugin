@@ -32,12 +32,12 @@ import org.rhq.core.pluginapi.inventory.ResourceDiscoveryContext;
 * 
 * @author Caleb House
 */
-public class VictimsDiscoveryComponent implements ManualAddFacet<VictimsComponent>, ResourceDiscoveryComponent<VictimsComponent> {
+public class VictimsDiscoveryComponent implements ManualAddFacet, ResourceDiscoveryComponent {
 
 	//Setup for the plugin. Since nothing happens just create a one time Discovered Resource.
     @Override
     public DiscoveredResourceDetails discoverResource(Configuration pluginConfiguration,
-                                                      ResourceDiscoveryContext<VictimsComponent> context) throws InvalidPluginConfigurationException {
+                                                      ResourceDiscoveryContext context) throws InvalidPluginConfigurationException {
 
         DiscoveredResourceDetails result = new DiscoveredResourceDetails(
             context.getResourceType(),
@@ -53,50 +53,7 @@ public class VictimsDiscoveryComponent implements ManualAddFacet<VictimsComponen
     //Not used but brought in from interfaces
     @Override
     public Set<DiscoveredResourceDetails> discoverResources(
-        ResourceDiscoveryContext<VictimsComponent> context) throws InvalidPluginConfigurationException, Exception {
+        ResourceDiscoveryContext context) throws InvalidPluginConfigurationException, Exception {
         return Collections.emptySet();
     }
 }
-/*
-	private static final Log LOG = LogFactory.getLog(VictimsDiscoveryComponent.class);
-	private static final String VICTIMS_SCAN_PATH = "paths";
-	private static final String VICTIMS_VERSION = "version";
-	
-	public Set<DiscoveredResourceDetails> discoverResources(ResourceDiscoveryContext context) {
-
-		
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Resource Discovery Started");
-        }
-        Set<DiscoveredResourceDetails> servers = new LinkedHashSet<DiscoveredResourceDetails>();
-
-        // Process any auto-discovered resources.
-        List<ProcessScanResult> autoDiscoveryResults = context.getAutoDiscoveredProcesses();
-        for (ProcessScanResult result : autoDiscoveryResults) {
-            LOG.info("Discovered a mysql process: " + result);
-            ProcessInfo procInfo = result.getProcessInfo();
-            servers.add(createResourceDetails(context, context.getDefaultPluginConfiguration(), procInfo));
-        }
-
-        return servers;
-    }
-
-    public DiscoveredResourceDetails discoverResource(Configuration pluginConfiguration,
-        ResourceDiscoveryContext resourceDiscoveryContext) throws InvalidPluginConfigurationException {
-        ProcessInfo processInfo = null;
-        DiscoveredResourceDetails resourceDetails = createResourceDetails(resourceDiscoveryContext,
-            pluginConfiguration, processInfo);
-        return resourceDetails;
-    }
-    
-    protected static DiscoveredResourceDetails createResourceDetails(ResourceDiscoveryContext discoveryContext,
-            Configuration pluginConfig, ProcessInfo processInfo) throws InvalidPluginConfigurationException {
-            String key = new StringBuilder().append("VictimsEVD:")
-                .append(pluginConfig.getSimple(VICTIMS_SCAN_PATH).getStringValue()).toString();
-            DiscoveredResourceDetails result = new DiscoveredResourceDetails(discoveryContext.getResourceType(), key, "victims",
-            		pluginConfig.getSimple(VICTIMS_VERSION).getStringValue(), "Victims EVD Scanner", pluginConfig, processInfo);
-            return result;
-
-        }
-}
-*/
