@@ -9,7 +9,7 @@
 		<version>4.10.0</version>
 	</parent>
 
-	<artifactId>rhq-victims-plugin</artifactId>
+	<artifactId>victims-RHQ-crossover</artifactId>
 	<packaging>jar</packaging>
 
 	<name>RHQ Victims Plugin</name>

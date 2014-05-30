@@ -30,6 +30,11 @@ public class VictimsServerComponent implements ServerPluginComponent, ControlFac
     private static String PATH = "path";
 
     public ControlResults checkCVE(ControlResults controlResults) {
+    	/* Actual method for getting CVE results
+    	* Works by running through the SyncMap and slamming results
+    	* Appropriate shape. This is so far beyond usable. It really needs
+    	* DB access but this is basically proof of concept
+    	*/
     	tempInfected = new PropertyList(INFECTED);
     	for (VictimsRecord record: tempDB.getRecords()) {
     		for (String name : tempDB.pcNames(record)) {
@@ -47,27 +52,18 @@ public class VictimsServerComponent implements ServerPluginComponent, ControlFac
     	controlResults.getComplexResults().put(tempInfected);
     	return controlResults;
     }
-    /*
-     * <serverplugin:results>
-				<c:list-property name="paths">
-					<c:list-property name="cves">
-						<c:simple-property name="pc" type="string" readOnly="true" />
-						<c:simple-property name="cve" type="string" readOnly="true" />
-					</c:list-property>
-			</c:list-property>
-     */
     
     public void initialize(ServerPluginContext context) throws Exception {
         this.context = context;
     }
 
-    public void start() {
+    public void start() { //Setup, starts up the listener
         serverSide = new ServerListener(Integer.parseInt((context.getPluginConfiguration().getSimpleValue("portnumber"))));
         serverSide.run();
     }
 
     public void stop() {
-
+    	serverSide.running = false;
     }
 
     public void shutdown() {
@@ -75,7 +71,7 @@ public class VictimsServerComponent implements ServerPluginComponent, ControlFac
     }
 
     public ControlResults invoke(String name, Configuration parameters) {
-        ControlResults controlResults = new ControlResults();
+        ControlResults controlResults = new ControlResults(); //Gets any results stored in the SyncJSONMap
         if (name.equals("checkCVE")) {
         	controlResults = checkCVE(controlResults);
         } else {
