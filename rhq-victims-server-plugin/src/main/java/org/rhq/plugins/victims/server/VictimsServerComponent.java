@@ -79,4 +79,29 @@ public class VictimsServerComponent implements ServerPluginComponent, ControlFac
         }
         return controlResults;
     }
+    
+    @Override
+    public String toString() {
+        if (this.context == null) {
+            return "<no context>";
+        }
+
+        StringBuilder str = new StringBuilder();
+        str.append("plugin-key=").append(this.context.getPluginEnvironment().getPluginKey()).append(",");
+        str.append("plugin-url=").append(this.context.getPluginEnvironment().getPluginUrl()).append(",");
+        str.append("plugin-config=[").append(getPluginConfigurationString()).append(']'); // do not append ,
+        return str.toString();
+    }
+    
+    private String getPluginConfigurationString() {
+        String results = "";
+        Configuration config = this.context.getPluginConfiguration();
+        for (PropertySimple prop : config.getSimpleProperties().values()) {
+            if (results.length() > 0) {
+                results += ", ";
+            }
+            results = results + prop.getName() + "=" + prop.getStringValue();
+        }
+        return results;
+    }
 }

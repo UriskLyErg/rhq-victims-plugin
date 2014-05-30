@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<generic-plugin name="VictimsServerPlugin" displayName="Victims Server Plugin"
+	description="Collects Victims data." package="org.custom" version="1.0"
+	apiVersion="2.0" disabledOnDiscovery="false"
+	xmlns="urn:xmlns:rhq-serverplugin.generic" xmlns:serverplugin="urn:xmlns:rhq-serverplugin"
+	xmlns:c="urn:xmlns:rhq-configuration">
+
+	<serverplugin:plugin-component class="VictimsServerComponent">
+		<serverplugin:control name="checkCVE"
+			description="A test control operation">
+			<serverplugin:results>
+				<c:list-property name="infected">
+					<c:list-property name="record">
+						<c:simple-property name="pc" />
+						<c:simple-property name="path" />
+						<c:simple-property name="cve" />
+					</c:list-property>
+				</c:list-property>
+			</serverplugin:results>
+		</serverplugin:control>
+	</serverplugin:plugin-component>
+
+	<serverplugin:plugin-configuration>
+		<c:simple-property name="portnumber" type="string"
+			required="true" default="654321" description="Port number for connection" />
+	</serverplugin:plugin-configuration>
+
+</generic-plugin>

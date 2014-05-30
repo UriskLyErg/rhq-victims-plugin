@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<plugin name="VictimsServerPlugin" displayName="Victims Server Plugin"
+	description="Collects Victims data." package="org.rhq.plugins.server.agent.victims"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:xmlns:rhq-plugin"
+	xmlns:c="urn:xmlns:rhq-configuration">
+
+	<server name="ServerVictims" class="VictimsServerComponent" discovery="VictimsServerDiscoveryComponent"
+		description="Victims Check" supportsManualAdd="true">
+		<plugin-configuration>
+		<c:simple-property name="portnumber" type="string"
+				description="Port number of server." required="true" default="654321" />
+		</plugin-configuration>
+		<operation name="checkCVE" description="Returns CVE's">
+			<results>
+				<c:list-property name="infected">
+					<c:map-property name="record">
+						<c:simple-property name="pc" />
+						<c:simple-property name="path" />
+						<c:simple-property name="cve" />
+					</c:map-property>
+				</c:list-property>
+			</results>
+		</operation>
+	</server>
+	
+</plugin>

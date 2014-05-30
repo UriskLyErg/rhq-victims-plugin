@@ -87,9 +87,9 @@ public class VictimsComponent implements
 		for (int i = 0; i < pluginConfiguration.getList(PATH_CONFIGURATION).getList().size(); i++) {
 			paths.add(pluginConfiguration.getList(PATH_CONFIGURATION).getList().get(i).getName());
 		}
-		//hostName = this.pluginConfiguration.getSimple(URL_CONFIGURATION).getStringValue();
-		//pcName = this.resourceContext.getSystemInformation().getHostname();
-		//portNumber = this.pluginConfiguration.getSimple(PORT).getIntegerValue();
+		hostName = this.pluginConfiguration.getSimple(URL_CONFIGURATION).getStringValue();
+		pcName = this.resourceContext.getSystemInformation().getHostname();
+		portNumber = this.pluginConfiguration.getSimple(PORT).getIntegerValue();
 	}
 
 	// Useless, we never want to stop, keep on keeping on
