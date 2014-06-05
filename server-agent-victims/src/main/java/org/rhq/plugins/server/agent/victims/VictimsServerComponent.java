@@ -31,6 +31,7 @@ public class VictimsServerComponent implements ResourceComponent<ResourceCompone
     private static String PATH = "path";
     private static String RETURN_RESULTS = "checkCVE";
     private static String PORT_NUMBER = "portnumber";
+    private static String WIPE_DB = "cleanDB";
     
     /*<c:list-property name="infected">
 	<c:list-property name="host">
@@ -67,6 +68,16 @@ public class VictimsServerComponent implements ResourceComponent<ResourceCompone
     	results.getComplexResults().put(tempInfected);
     	return results;
     }
+    
+    public void clearDB(){
+    	for (VictimsRecord record: tempDB.getRecords()){
+    		for (String host : tempDB.pcNames(record)) {
+    			for (String path : tempDB.getPaths(record)){
+    				tempDB.deleteName(record, host, path);
+    			}
+    		}
+    	}
+    }
 
 	public AvailabilityType getAvailability() {
 		return AvailabilityType.UP;
@@ -78,6 +89,9 @@ public class VictimsServerComponent implements ResourceComponent<ResourceCompone
 		
 		if (name != null && name.equals(RETURN_RESULTS)) {
 			results = checkCVE(parameters, results);
+        } else if (name != null && name.equals(WIPE_DB)) {
+        	clearDB();
+        	results.setSimpleResult("deleted");
         } else {
         	results.setErrorMessage("Unknown operation name: " + name);
         }

@@ -11,11 +11,11 @@
 			description="A test control operation">
 			<serverplugin:results>
 				<c:list-property name="infected">
-					<c:list-property name="record">
+					<c:map-property name="record">
 						<c:simple-property name="pc" />
 						<c:simple-property name="path" />
 						<c:simple-property name="cve" />
-					</c:list-property>
+					</c:map-property>
 				</c:list-property>
 			</serverplugin:results>
 		</serverplugin:control>

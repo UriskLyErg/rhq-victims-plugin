@@ -2,16 +2,19 @@ package org.rhq.plugins.victims.server;
 
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.configuration.PropertyList;
+import org.rhq.core.domain.configuration.PropertyMap;
+import org.rhq.core.domain.configuration.PropertySimple;
 import org.rhq.core.pluginapi.inventory.ResourceComponent;
 import org.rhq.core.pluginapi.inventory.ResourceContext;
-import org.rhq.core.domain.configuration.PropertySimple;
 import org.rhq.enterprise.server.plugin.pc.ControlFacet;
 import org.rhq.enterprise.server.plugin.pc.ControlResults;
 import org.rhq.enterprise.server.plugin.pc.ServerPluginComponent;
 import org.rhq.enterprise.server.plugin.pc.ServerPluginContext;
 
 import com.redhat.victims.VictimsRecord;
+
 import org.rhq.plugins.victims.server.SyncJSONPCMap;
+import org.rhq.plugins.victims.server.ServerListener;
 
 public class VictimsServerComponent implements ServerPluginComponent, ControlFacet {
 
@@ -20,7 +23,7 @@ public class VictimsServerComponent implements ServerPluginComponent, ControlFac
     private ServerPluginContext context;
     private SyncJSONPCMap tempDB = new SyncJSONPCMap();
     private ServerListener serverSide = null;
-    private PropertyList tempRecord = null;
+    private PropertyMap tempRecord = null;
     private PropertyList tempInfected = null;
     
     private static String INFECTED = "infected";
@@ -39,11 +42,11 @@ public class VictimsServerComponent implements ServerPluginComponent, ControlFac
     	for (VictimsRecord record: tempDB.getRecords()) {
     		for (String name : tempDB.pcNames(record)) {
     			for (String path : tempDB.getPaths(record)) {
-    				tempRecord = new PropertyList(RECORD);
+    				tempRecord = new PropertyMap(RECORD);
         			for (String cve : record.cves){
-        				tempRecord.add(new PropertySimple(PC, name));
-        				tempRecord.add(new PropertySimple(PATH, path));
-        				tempRecord.add(new PropertySimple(CVE, cve));
+        				tempRecord.put(new PropertySimple(PC, name));
+        				tempRecord.put(new PropertySimple(PATH, path));
+        				tempRecord.put(new PropertySimple(CVE, cve));
         			}    				
     			}
 
@@ -80,6 +83,7 @@ public class VictimsServerComponent implements ServerPluginComponent, ControlFac
         return controlResults;
     }
     
+    /*
     @Override
     public String toString() {
         if (this.context == null) {
@@ -103,5 +107,5 @@ public class VictimsServerComponent implements ServerPluginComponent, ControlFac
             results = results + prop.getName() + "=" + prop.getStringValue();
         }
         return results;
-    }
+    } */
 }
