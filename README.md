@@ -33,8 +33,6 @@ On the plugin side you can schedule scan which will send victims records across 
 On the server side you can schedule checkCVE which will test all the records
 
 
-
-
 Known Issues
 
 This plugin may not actually work!
