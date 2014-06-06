@@ -26,8 +26,25 @@ add a list of paths on your computer (To many is super intensive)
 Install the server plugin on only one computer or multiple if you want to share the load
 This is done by right clicking and importing serverVictim and setting the port to that of the agent plugins
 
+MAKE SURE YOU INSTALL SERVER PLUGIN BEFORE ANY OF THIS IS DONE!!!!!!!
+
 when you want to schedule a scan go to operations schedule new down the bottom 
 On the plugin side you can schedule scan which will send victims records across the network
 On the server side you can schedule checkCVE which will test all the records
 
 
+
+
+Known Issues
+This plugin may not actually work!
+  This is a functioning plugin on both ends of the work however I am unsure of its accurateness of storing/transfering data
+  There is most definiately an issue which is causing data to not be represented appropriately because of this.
+
+Suggested Improvements
+Start storing the records in a database!
+  Currently its using a syncronized custom map class which is a joke ~ wildly inefficient not to mention bad in general.
+  Currently sending data over sockets to this map class is not good.
+Mainly the database. This will allow you to save victims records appropriately and then not have the issues that have been created in this.
+
+I am avaliable for contact about this at CalebHouse94@gmail.com
+  
