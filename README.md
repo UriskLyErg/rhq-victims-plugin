@@ -41,7 +41,9 @@ This plugin may not actually work!
   There is most definiately an issue which is causing data to not be represented appropriately because of this.
 
 Suggested Improvements
+
 Start storing the records in a database!
+
   Currently its using a syncronized custom map class which is a joke ~ wildly inefficient not to mention bad in general.
   Currently sending data over sockets to this map class is not good.
 Mainly the database. This will allow you to save victims records appropriately and then not have the issues that have been created in this.
