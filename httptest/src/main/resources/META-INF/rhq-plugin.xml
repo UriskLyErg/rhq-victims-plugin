@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<plugin name="rhqvictims" displayName="Victims Rhq Plugin"
+<plugin name="RHQVictim" displayName="RHQ Victims Plugin"
 	description="Monitoring of vulnerable Jars/Sars/Wars" package="org.rhq.plugins.victims"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="urn:xmlns:rhq-plugin"
 	xmlns:c="urn:xmlns:rhq-configuration">
 
-	<server name="rhqvictims" class="VictimsComponent" discovery="VictimsDiscoveryComponent"
+	<server name="RHQVictim" class="VictimsComponent" discovery="VictimsDiscoveryComponent"
 		description="Victims Check" supportsManualAdd="true">
 
 		<plugin-configuration>
 			<c:simple-property name="port" type="string"
 				description="Port number of server." required="true" />
 			<c:simple-property name="hostname" type="string"
-				description="Host name of server." required="true"/>
-			<c:list-property name="paths">
-				<c:simple-property name="path" type="string"
-					description="Directory to monitor." required="true"/>
-			</c:list-property>
+				description="Host name of server." required="true" />
+			<c:simple-property name="path" type="string"
+				description="Directory to monitor." required="true" readonly="true" />
 		</plugin-configuration>
 
 		<operation name="scanLocal" description="Causes the system to run a victims scan">

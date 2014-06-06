@@ -19,31 +19,20 @@
 
 package org.rhq.plugins.victims;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.rhq.core.domain.configuration.Configuration;
 import org.rhq.core.domain.measurement.AvailabilityType;
-import org.rhq.core.domain.measurement.MeasurementReport;
-import org.rhq.core.domain.measurement.MeasurementScheduleRequest;
 import org.rhq.core.pluginapi.inventory.InvalidPluginConfigurationException;
 import org.rhq.core.pluginapi.inventory.ResourceComponent;
 import org.rhq.core.pluginapi.inventory.ResourceContext;
-import org.rhq.core.pluginapi.measurement.MeasurementFacet;
 import org.rhq.core.pluginapi.operation.OperationFacet;
 import org.rhq.core.pluginapi.operation.OperationResult;
 
-import com.redhat.victims.VictimsException;
 import com.redhat.victims.VictimsRecord;
 import com.redhat.victims.VictimsScanner;
 
@@ -58,7 +47,6 @@ public class VictimsComponent implements
 		ResourceComponent<ResourceComponent<?>>, OperationFacet {
 
 	private static final Log LOG = LogFactory.getLog(VictimsComponent.class);
-	private static String PATH_CONFIGURATION = "paths";
 	private static String SCAN_LOCAL_OPERATION = "scanLocal";
 	private static String URL_CONFIGURATION = "hostname";
 	private static String SALT = "TESTSALT";
@@ -69,7 +57,7 @@ public class VictimsComponent implements
 	// No longer required as Victims is smart enough to do directories
 	// private static final String[] EXTENSIONS = new String[] { "jar", "war",
 	// "sar" };
-	private ArrayList<String> paths = new ArrayList<String>();
+	private String path = "";
 	private String hostName = "";
 	private String pcName = "";
 
@@ -84,10 +72,8 @@ public class VictimsComponent implements
 		this.pluginConfiguration = this.resourceContext.getPluginConfiguration();
 		// Loops for dealing with the fact its a list, makes sure we get all of
 		// the paths
-		for (int i = 0; i < pluginConfiguration.getList(PATH_CONFIGURATION).getList().size(); i++) {
-			paths.add(pluginConfiguration.getList(PATH_CONFIGURATION).getList().get(i).getName());
-		}
 		hostName = this.pluginConfiguration.getSimple(URL_CONFIGURATION).getStringValue();
+		path = resourceContext.getResourceKey();
 		pcName = this.resourceContext.getSystemInformation().getHostname();
 		portNumber = this.pluginConfiguration.getSimple(PORT).getIntegerValue();
 	}
@@ -107,16 +93,13 @@ public class VictimsComponent implements
 		String toSend = "";
 
 		if (name != null && name.equals(SCAN_LOCAL_OPERATION)) {
-			for (String path : paths) {
-				if (new File(path).exists()) {
-					for (VictimsRecord vr : VictimsScanner.getRecords(path)) {
-						toSend = pcName + SALT + vr.toString() + SALT + path;
-						out.println(toSend);
-						out.println();
-					}
+			if (new File(path).exists()) {
+				for (VictimsRecord vr : VictimsScanner.getRecords(path)) {
+					toSend = pcName + SALT + vr.toString() + SALT + path;
+					out.println(toSend);
+					out.println();
 				}
 			}
-			
 			OperationResult result = new OperationResult("complete");
 			echoSocket.close();
 			return result;

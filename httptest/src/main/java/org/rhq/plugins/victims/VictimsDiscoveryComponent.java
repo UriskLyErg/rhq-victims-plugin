@@ -39,10 +39,18 @@ public class VictimsDiscoveryComponent implements ManualAddFacet, ResourceDiscov
     public DiscoveredResourceDetails discoverResource(Configuration pluginConfiguration,
                                                       ResourceDiscoveryContext context) throws InvalidPluginConfigurationException {
 
+    	String path = pluginConfiguration.getSimpleValue("path");
+    	if (path==null || path.isEmpty()) {
+            throw new InvalidPluginConfigurationException("Path must not be empty");
+        }
+        if (path.equals("/")) {
+            throw new InvalidPluginConfigurationException("/ is forbidden");
+        }
+        
         DiscoveredResourceDetails result = new DiscoveredResourceDetails(
             context.getResourceType(),
-            "victims",
-            "Victims",
+            path,
+            path,
             null,
             "Victims Paths",
             pluginConfiguration,

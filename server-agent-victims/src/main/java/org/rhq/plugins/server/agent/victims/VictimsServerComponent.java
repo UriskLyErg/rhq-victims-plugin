@@ -32,17 +32,6 @@ public class VictimsServerComponent implements ResourceComponent<ResourceCompone
     private static String RETURN_RESULTS = "checkCVE";
     private static String PORT_NUMBER = "portnumber";
     private static String WIPE_DB = "cleanDB";
-    
-    /*<c:list-property name="infected">
-	<c:list-property name="host">
-		<c:simple-property name="pc" />
-	</c:list-property>
-	<c:list-property name="dir">
-		<c:simple-property name="path" />
-	</c:list-property>
-	<c:list-property name="record">
-		<c:simple-property name="cve" />
-	</c:list-property>
 	
     /* Actual method for getting CVE results
     * Works by running through the SyncMap and slamming results
